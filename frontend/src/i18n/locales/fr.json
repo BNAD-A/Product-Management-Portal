@@ -1,0 +1,71 @@
+{
+  "app": {
+    "title": "PreProject"
+  },
+  "menu": {
+    "products": "Produits",
+    "theme": "Thème",
+    "language": "Langue",
+    "logout": "Déconnexion"
+  },
+  "auth": {
+    "loginTitle": "Connexion",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "login": "SE CONNECTER",
+    "invalidCredentials": "Identifiants invalides",
+    "serverUnreachable": "Serveur injoignable"
+  },
+  "register": {
+    "title": "Inscription",
+    "createAccount": "Créer un compte",
+    "backToLogin": "Retour au login",
+    "creating": "Création..."
+  },
+  "actions": {
+    "refresh": "Rafraîchir",
+    "create": "Créer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "cancel": "Annuler"
+  },
+  "products": {
+    "title": "Produits",
+    "name": "Nom",
+    "description": "Description",
+    "price": "Prix",
+    "quantity": "Quantité",
+    "actions": "Actions",
+    "empty": "Aucun produit",
+    "confirmDeletionTitle": "Confirmer la suppression",
+    "confirmDeletionMessage": "Êtes-vous sûr de vouloir supprimer ce produit ?"
+  },
+  "validation": {
+    "required": "Champ requis",
+    "minChars": "Minimum {{count}} caractères",
+    "emailInvalid": "Email invalide",
+    "minValue": "Doit être ≥ {{min}}"
+  },
+  "toast": {
+    "loginSuccess": "Connexion réussie",
+    "registerSuccess": "Compte créé avec succès",
+    "productsLoadFail": "Échec du chargement des produits",
+    "productCreated": "Produit créé avec succès",
+    "productUpdated": "Produit mis à jour",
+    "productDeleted": "Produit supprimé",
+    "serverUnreachable": "Serveur injoignable",
+    "invalidCredentials": "Identifiants invalides",
+    "forbidden": "Accès refusé",
+    "unknownError": "Une erreur est survenue"
+  },
+  "admin": {
+    "usersTitle": "Utilisateurs (Admin)",
+    "role": "Rôle",
+    "confirmDeletion": "Confirmer la suppression",
+    "deleteUserConfirm": "Êtes-vous sûr de vouloir supprimer {{username}} ?"
+  },
+  "common": {
+    "loading": "Chargement..."
+  }
+}

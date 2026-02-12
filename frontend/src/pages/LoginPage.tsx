@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { LOGIN_MUTATION } from "../graphql/mutations";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import { Box, Button, Paper, TextField, Typography, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { setToken } from "../auth/token"; // ✅
+import { useTranslation } from "react-i18next";
+
+import { LOGIN_MUTATION } from "../graphql/mutations";
+import { setToken } from "../auth/token";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
   const [username, setUsername] = useState("admin1");
   const [password, setPassword] = useState("");
 
@@ -15,51 +19,68 @@ export default function LoginPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await login({ variables: { username, password } });
+    try {
+      const res = await login({ variables: { username, password } });
+      const token = res.data?.login?.token;
 
-    const token = res.data?.login?.token;
+      if (!token) {
+        console.error("Login response without token:", res.data);
+        return;
+      }
 
-    if (token) {
       setToken(token);
       navigate("/products", { replace: true });
-      return;
+    } catch (err) {
+      console.error("Login failed:", err);
     }
-
-    console.error("Login OK mais token absent:", res.data);
   };
+
+  const errorMessage = (() => {
+    if (!error) return null;
+    const msg = error.message?.toLowerCase() || "";
+
+    if (msg.includes("invalid credentials")) return t("auth.invalidCredentials");
+    if (msg.includes("network") || msg.includes("failed to fetch"))
+      return t("auth.serverUnreachable");
+
+    return error.message;
+  })();
 
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h3" sx={{ mb: 2 }}>
-        Login
+        {t("auth.loginTitle")}
       </Typography>
 
       <Paper sx={{ p: 3, maxWidth: 520 }}>
         <form onSubmit={onSubmit}>
           <TextField
-            label="Username"
+            label={t("auth.username")}
             fullWidth
             sx={{ mb: 2 }}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
           />
+
           <TextField
-            label="Password"
+            label={t("auth.password")}
             type="password"
             fullWidth
             sx={{ mb: 2 }}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
           />
 
-          <Button type="submit" variant="contained" disabled={loading}>
-            {loading ? "..." : "LOGIN"}
+          <Button type="submit" variant="contained" disabled={loading || !username || !password}>
+            {loading ? t("common.loading") : t("auth.login")}
           </Button>
 
-          {error && (
-            <Typography sx={{ mt: 2 }} color="error">
-              {error.message}
-            </Typography>
+          {errorMessage && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {errorMessage}
+            </Alert>
           )}
         </form>
       </Paper>

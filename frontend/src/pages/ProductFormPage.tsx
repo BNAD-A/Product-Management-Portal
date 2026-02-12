@@ -1,135 +1,111 @@
-// src/pages/ProductFormPage.tsx
-import { useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "@apollo/client/react";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import { CREATE_PRODUCT, UPDATE_PRODUCT, PRODUCT_BY_ID } from "../graphql/operations";
+import { Box, Button, Paper, TextField } from "@mui/material";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-export default function ProductFormPage() {
-  const nav = useNavigate();
-  const params = useParams();
-  const isEdit = Boolean(params.id);
-  const idNum = useMemo(() => (params.id ? Number(params.id) : null), [params.id]);
+type ProductFormValues = {
+  name: string;
+  description?: string;
+  price: number;
+  quantity: number;
+};
 
-  const { data, loading } = useQuery(PRODUCT_BY_ID, {
-    variables: { id: idNum ?? 0 },
-    skip: !isEdit || !idNum,
-  });
+type Props = {
+  initialValues?: Partial<ProductFormValues>;
+  submitLabel?: "save" | "create"; // pour traduire le bouton
+  onSubmit: (values: ProductFormValues) => Promise<void> | void;
+  onCancel: () => void;
+  loading?: boolean;
+};
 
-  const [createProduct, { loading: creating, error: createErr }] = useMutation(CREATE_PRODUCT);
-  const [updateProduct, { loading: updating, error: updateErr }] = useMutation(UPDATE_PRODUCT);
+export default function ProductFormPage({
+  initialValues,
+  submitLabel = "save",
+  onSubmit,
+  onCancel,
+  loading = false,
+}: Props) {
+  const { t } = useTranslation();
 
-  // simple state (US-10.x du PDF parle react-hook-form; on fera ça juste après si tu veux)
-  const [form, setForm] = (function () {
-    // petit hack pour éviter de te multiplier les fichiers maintenant
-    const React = require("react") as typeof import("react");
-    return React.useState({ name: "", description: "", price: 0, quantity: 0 }) as any;
-  })();
+  const [name, setName] = useState(initialValues?.name ?? "");
+  const [description, setDescription] = useState(initialValues?.description ?? "");
+  const [price, setPrice] = useState<number>(Number(initialValues?.price ?? 0));
+  const [quantity, setQuantity] = useState<number>(Number(initialValues?.quantity ?? 0));
 
-  useEffect(() => {
-    if (isEdit && data?.productById) {
-      const p = data.productById;
-      setForm({
-        name: p.name ?? "",
-        description: p.description ?? "",
-        price: Number(p.price ?? 0),
-        quantity: Number(p.quantity ?? 0),
-      });
-    }
-  }, [isEdit, data, setForm]);
+  const errors = useMemo(() => {
+    const e: { name?: string; price?: string; quantity?: string } = {};
+    if (!name.trim()) e.name = t("validation.required");
+    else if (name.trim().length < 2) e.name = t("validation.minChars", { count: 2 });
+    if (Number(price) < 0) e.price = t("validation.minValue", { min: 0 });
+    if (Number(quantity) < 0) e.quantity = t("validation.minValue", { min: 0 });
+    return e;
+  }, [name, price, quantity, t]);
 
-  const save = async () => {
-    // validations mini (le backend valide déjà; on mettra zod ensuite)
-    if (!form.name || form.name.trim().length < 2) return;
+  const canSubmit = Object.keys(errors).length === 0 && !loading;
 
-    if (!isEdit) {
-      await createProduct({
-        variables: {
-          input: {
-            name: form.name,
-            description: form.description || null,
-            price: Number(form.price),
-            quantity: Number(form.quantity),
-          },
-        },
-      });
-      nav("/products");
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canSubmit) return;
 
-    await updateProduct({
-      variables: {
-        id: idNum,
-        input: {
-          name: form.name,
-          description: form.description || null,
-          price: Number(form.price),
-          quantity: Number(form.quantity),
-        },
-      },
+    await onSubmit({
+      name: name.trim(),
+      description: description.trim() ? description.trim() : "",
+      price: Number(price),
+      quantity: Number(quantity),
     });
-    nav("/products");
   };
 
-  if (isEdit && loading) return <Typography>Loading...</Typography>;
-
   return (
-    <Box>
-      <Typography variant="h3" sx={{ mb: 2 }}>
-        {isEdit ? "Edit Product" : "Create Product"}
-      </Typography>
-
-      <Paper sx={{ p: 2, maxWidth: 520 }}>
+    <Paper sx={{ p: 3, maxWidth: 820 }}>
+      <form onSubmit={handleSubmit}>
         <TextField
-          label="Name"
+          label={t("products.name")}
           fullWidth
           sx={{ mb: 2 }}
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
-        <TextField
-          label="Description"
-          fullWidth
-          sx={{ mb: 2 }}
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-        />
-        <TextField
-          label="Price"
-          type="number"
-          fullWidth
-          sx={{ mb: 2 }}
-          value={form.price}
-          onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
-        />
-        <TextField
-          label="Quantity"
-          type="number"
-          fullWidth
-          sx={{ mb: 2 }}
-          value={form.quantity}
-          onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          error={!!errors.name}
+          helperText={errors.name}
         />
 
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <Button variant="outlined" onClick={() => nav("/products")}>
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            onClick={save}
-            disabled={creating || updating || form.name.trim().length < 2}
-          >
-            Save
-          </Button>
+        <TextField
+          label={t("products.description")}
+          fullWidth
+          sx={{ mb: 2 }}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+
+        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+          <TextField
+            label={t("products.price")}
+            type="number"
+            fullWidth
+            value={price}
+            onChange={(e) => setPrice(Number(e.target.value))}
+            error={!!errors.price}
+            helperText={errors.price}
+          />
+          <TextField
+            label={t("products.quantity")}
+            type="number"
+            fullWidth
+            value={quantity}
+            onChange={(e) => setQuantity(Number(e.target.value))}
+            error={!!errors.quantity}
+            helperText={errors.quantity}
+          />
         </Box>
 
-        {(createErr || updateErr) && (
-          <Typography color="error" sx={{ mt: 2 }}>
-            {createErr?.message || updateErr?.message}
-          </Typography>
-        )}
-      </Paper>
-    </Box>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button type="submit" variant="contained" disabled={!canSubmit}>
+            {loading ? t("common.loading") : t(submitLabel === "create" ? "actions.create" : "actions.save")}
+          </Button>
+
+          <Button type="button" variant="outlined" onClick={onCancel}>
+            {t("actions.cancel")}
+          </Button>
+        </Box>
+      </form>
+    </Paper>
   );
 }

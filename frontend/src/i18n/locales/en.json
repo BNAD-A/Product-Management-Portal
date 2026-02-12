@@ -1,0 +1,90 @@
+{
+  "app": {
+    "title": "PreProject"
+  },
+  "menu": {
+    "products": "Products",
+    "theme": "Theme",
+    "language": "Language",
+    "logout": "Logout"
+  },
+  "auth": {
+    "loginTitle": "Login",
+    "username": "Username",
+    "password": "Password",
+    "login": "LOGIN",
+    "invalidCredentials": "Invalid credentials",
+    "serverUnreachable": "Server unreachable"
+  },
+  "products": {
+    "title": "Products",
+    "create": "Create product",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "name": "Name",
+    "price": "Price",
+    "quantity": "Quantity",
+    "actions": "Actions",
+    "confirmDeletionTitle": "Confirm deletion",
+    "confirmDeletionMessage": "Are you sure you want to delete this product?"
+  },
+
+  "common": { "loading": "Loading..." },
+  "actions": {
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "refresh": "Refresh"
+  },
+  "validation": {
+    "required": "Required",
+    "minChars": "Minimum {{count}} characters",
+    "emailInvalid": "Invalid email",
+    "minValue": "Must be ≥ {{min}}"
+  },
+  "toast": {
+    "loginSuccess": "Logged in successfully",
+    "registerSuccess": "Account created successfully",
+    "productsLoadFail": "Failed to load products",
+    "productCreated": "Product created successfully",
+    "productUpdated": "Product updated successfully",
+    "productDeleted": "Product deleted",
+    "serverUnreachable": "Server unreachable",
+    "invalidCredentials": "Invalid credentials",
+    "forbidden": "Access denied",
+    "unknownError": "Something went wrong"
+  },
+  "products": {
+    "title": "Products",
+    "name": "Name",
+    "description": "Description",
+    "price": "Price",
+    "quantity": "Quantity",
+    "actions": "Actions",
+    "empty": "No products",
+    "confirmDeletionTitle": "Confirm deletion",
+    "confirmDeletionMessage": "Are you sure you want to delete this product?"
+  },
+  "auth": {
+    "loginTitle": "Login",
+    "username": "Username",
+    "password": "Password",
+    "login": "LOGIN"
+  },
+  "register": {
+    "title": "Register",
+    "createAccount": "Create account",
+    "backToLogin": "Back to login",
+    "creating": "Creating..."
+  },
+  "admin": {
+    "usersTitle": "Users (Admin)",
+    "role": "Role",
+    "confirmDeletion": "Confirm deletion",
+    "deleteUserConfirm": "Are you sure you want to delete {{username}}?"
+  }
+}

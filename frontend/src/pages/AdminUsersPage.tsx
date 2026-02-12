@@ -16,11 +16,16 @@ import {
   Typography,
 } from "@mui/material";
 import { useMemo, useState } from "react";
+import { useSnackbar } from "notistack";
+import { useTranslation } from "react-i18next";
 import { DELETE_USER, UPDATE_USER_ROLE, USERS_QUERY } from "../graphql/users";
 
 type UserRow = { id: string; username: string; email: string; role: "ADMIN" | "USER" };
 
 export default function AdminUsersPage() {
+  const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+
   const { data, loading, refetch } = useQuery(USERS_QUERY, { fetchPolicy: "cache-and-network" });
   const [updateRole, { loading: updating }] = useMutation(UPDATE_USER_ROLE);
   const [deleteUser, { loading: deleting }] = useMutation(DELETE_USER);
@@ -34,10 +39,10 @@ export default function AdminUsersPage() {
     try {
       await updateRole({ variables: { userId: u.id, role } });
       await refetch();
-      // toast success
+      enqueueSnackbar(t("actions.save"), { variant: "success" });
     } catch (e) {
+      enqueueSnackbar(t("toast.unknownError"), { variant: "error" });
       console.error(e);
-      // toast error
     }
   };
 
@@ -53,27 +58,27 @@ export default function AdminUsersPage() {
       setConfirmOpen(false);
       setSelectedUser(null);
       await refetch();
-      // toast "User deleted"
+      enqueueSnackbar(t("actions.delete"), { variant: "success" });
     } catch (e) {
+      enqueueSnackbar(t("toast.unknownError"), { variant: "error" });
       console.error(e);
-      // toast error
     }
   };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <Typography variant="h5">Users (Admin)</Typography>
+      <Typography variant="h5">{t("admin.usersTitle")}</Typography>
 
       {loading ? (
-        <Typography>Loading...</Typography>
+        <Typography>{t("common.loading")}</Typography>
       ) : (
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Username</TableCell>
+              <TableCell>{t("auth.username")}</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell>{t("admin.role")}</TableCell>
+              <TableCell align="right">{t("products.actions")}</TableCell>
             </TableRow>
           </TableHead>
 
@@ -95,13 +100,8 @@ export default function AdminUsersPage() {
                 </TableCell>
 
                 <TableCell align="right">
-                  <Button
-                    color="error"
-                    variant="outlined"
-                    onClick={() => onAskDelete(u)}
-                    disabled={deleting}
-                  >
-                    Delete
+                  <Button color="error" variant="outlined" onClick={() => onAskDelete(u)} disabled={deleting}>
+                    {t("actions.delete")}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -111,14 +111,14 @@ export default function AdminUsersPage() {
       )}
 
       <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-        <DialogTitle>Confirm deletion</DialogTitle>
+        <DialogTitle>{t("admin.confirmDeletion")}</DialogTitle>
         <DialogContent>
-          Are you sure you want to delete <b>{selectedUser?.username}</b>?
+          {t("admin.deleteUserConfirm", { username: selectedUser?.username ?? "" })}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
+          <Button onClick={() => setConfirmOpen(false)}>{t("actions.cancel")}</Button>
           <Button color="error" onClick={onConfirmDelete}>
-            Delete
+            {t("actions.delete")}
           </Button>
         </DialogActions>
       </Dialog>

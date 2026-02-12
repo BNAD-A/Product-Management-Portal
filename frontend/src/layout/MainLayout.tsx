@@ -27,14 +27,19 @@ import { useThemeMode } from "../context/ThemeContext";
 import { clearToken } from "../auth/token";
 import { AUTH_EVENT } from "../auth/events";
 
+import { useTranslation } from "react-i18next";
+import { setAppLanguage } from "../i18n";
+
 const drawerWidth = 260;
 
 export default function MainLayout() {
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   const { mode, toggleTheme } = useThemeMode();
+  const { t, i18n } = useTranslation();
 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
@@ -47,16 +52,19 @@ export default function MainLayout() {
     if (reason) console.log("Logout:", reason);
   };
 
-  // Auto-logout listener (from Apollo errorLink)
+  // Auto logout listener (Apollo 401)
   useEffect(() => {
     const handler = (e: Event) => {
-      // @ts-ignore
       const detail = (e as CustomEvent).detail;
-      if (detail?.type === "LOGOUT") handleLogout(detail?.reason);
+      if (detail?.type === "LOGOUT") {
+        handleLogout(detail?.reason);
+      }
     };
 
     window.addEventListener(AUTH_EVENT, handler as EventListener);
-    return () => window.removeEventListener(AUTH_EVENT, handler as EventListener);
+    return () => {
+      window.removeEventListener(AUTH_EVENT, handler as EventListener);
+    };
   }, []);
 
   const drawerContent = (
@@ -65,6 +73,7 @@ export default function MainLayout() {
       <Divider />
 
       <List sx={{ pt: 1 }}>
+        {/* Products */}
         <ListItemButton
           selected={activePath.startsWith("/products")}
           onClick={() => {
@@ -75,31 +84,38 @@ export default function MainLayout() {
           <ListItemIcon>
             <InventoryIcon />
           </ListItemIcon>
-          <ListItemText primary="Products" />
+          <ListItemText primary={t("menu.products")} />
         </ListItemButton>
 
         <Divider sx={{ my: 1 }} />
 
-        {/* Theme */}
+        {/* Theme Switch */}
         <ListItemButton onClick={toggleTheme}>
           <ListItemIcon>
             <DarkModeIcon />
           </ListItemIcon>
-          <ListItemText primary="Theme" secondary={mode === "dark" ? "Dark" : "Light"} />
+          <ListItemText
+            primary={t("menu.theme")}
+            secondary={mode === "dark" ? "Dark" : "Light"}
+          />
           <Switch checked={mode === "dark"} onChange={toggleTheme} />
         </ListItemButton>
 
-        {/* Language placeholder */}
+        {/* Language Switch */}
         <ListItemButton
           onClick={() => {
-            // US-12 branchera i18n ici
-            alert("Language switch will be implemented in US-12 (i18n).");
+            const next = i18n.language === "fr" ? "en" : "fr";
+            setAppLanguage(next);
+            setMobileOpen(false);
           }}
         >
           <ListItemIcon>
             <LanguageIcon />
           </ListItemIcon>
-          <ListItemText primary="Language" secondary="US-12" />
+          <ListItemText
+            primary={t("menu.language")}
+            secondary={i18n.language.toUpperCase()}
+          />
         </ListItemButton>
 
         <Divider sx={{ my: 1 }} />
@@ -109,7 +125,7 @@ export default function MainLayout() {
           <ListItemIcon>
             <LogoutIcon />
           </ListItemIcon>
-          <ListItemText primary="Logout" />
+          <ListItemText primary={t("menu.logout")} />
         </ListItemButton>
       </List>
     </Box>
@@ -126,22 +142,30 @@ export default function MainLayout() {
       >
         <Toolbar>
           {!isDesktop && (
-            <IconButton color="inherit" edge="start" onClick={() => setMobileOpen(true)} sx={{ mr: 2 }}>
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={() => setMobileOpen(true)}
+              sx={{ mr: 2 }}
+            >
               <MenuIcon />
             </IconButton>
           )}
 
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            PreProject
+            {t("app.title")}
           </Typography>
 
-          <IconButton color="inherit" onClick={() => handleLogout("AppBar logout")}>
+          <IconButton
+            color="inherit"
+            onClick={() => handleLogout("AppBar logout")}
+          >
             <LogoutIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
 
-      {/* DRAWER DESKTOP (permanent) */}
+      {/* DESKTOP DRAWER */}
       {isDesktop && (
         <Drawer
           variant="permanent"
@@ -149,14 +173,17 @@ export default function MainLayout() {
           sx={{
             width: drawerWidth,
             flexShrink: 0,
-            "& .MuiDrawer-paper": { width: drawerWidth, boxSizing: "border-box" },
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              boxSizing: "border-box",
+            },
           }}
         >
           {drawerContent}
         </Drawer>
       )}
 
-      {/* DRAWER MOBILE (temporary) */}
+      {/* MOBILE DRAWER */}
       {!isDesktop && (
         <Drawer
           variant="temporary"
@@ -171,7 +198,7 @@ export default function MainLayout() {
         </Drawer>
       )}
 
-      {/* CONTENT */}
+      {/* MAIN CONTENT */}
       <Box
         component="main"
         sx={{
