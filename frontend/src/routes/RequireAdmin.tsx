@@ -1,20 +1,32 @@
-import { Navigate } from "react-router-dom";
-import { ReactNode } from "react";
-import { Box, CircularProgress } from "@mui/material";
-import { useMe } from "../state/useMe";
+import { Navigate, Outlet } from "react-router-dom";
+import { getToken } from "../auth/authStorage";
 
-export function RequireAdmin({ children }: { children: ReactNode }) {
-  const { me, loading } = useMe();
+type JwtPayload = { role?: string };
 
-  if (loading) {
-    return (
-      <Box sx={{ minHeight: "60vh", display: "grid", placeItems: "center" }}>
-        <CircularProgress />
-      </Box>
+function decodePayload(token: string): JwtPayload | null {
+  try {
+    const payloadPart = token.split(".")[1];
+    if (!payloadPart) return null;
+
+    // base64url -> base64
+    const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
+    const json = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"))
+        .join("")
     );
-  }
 
-  if (!me) return <Navigate to="/login" replace />;
-  if (me.role !== "ADMIN") return <Navigate to="/products" replace />;
-  return <>{children}</>;
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
+export default function RequireAdmin() {
+  const token = getToken();
+  const payload = token ? decodePayload(token) : null;
+
+  const isAdmin = payload?.role === "ADMIN";
+  return isAdmin ? <Outlet /> : <Navigate to="/products" replace />;
 }

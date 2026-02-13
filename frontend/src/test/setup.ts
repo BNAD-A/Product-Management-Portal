@@ -1,4 +1,5 @@
-import "@testing-library/jest-dom/vitest";
+import "@testing-library/jest-dom";
+export { mockUseQuery, mockUseMutation } from "./mocks/apolloHooks";
 
 Object.defineProperty(window, "matchMedia", {
   writable: true,
@@ -12,4 +13,13 @@ Object.defineProperty(window, "matchMedia", {
     removeListener: () => {},
     dispatchEvent: () => false,
   }),
+});
+
+import i18n from "../i18n";
+import { afterEach } from "vitest";
+
+afterEach(async () => {
+  await i18n.changeLanguage("en");
+  localStorage.removeItem("lang");
+  localStorage.removeItem("pp_lang");
 });
