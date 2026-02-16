@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import { ApolloClient, InMemoryCache } from "@apollo/client/core";
 import { MockLink } from "@apollo/client/testing";
 
-// ✅ adapte ces imports selon TON projet
 import { PRODUCTS_QUERY } from "../queries";
 import {
   CREATE_PRODUCT_MUTATION,
@@ -113,7 +112,6 @@ describe("US-13.3 Product GraphQL logic (Apollo mocked)", () => {
       variables: vars,
     });
 
-    // adapte selon ton backend: ok / success / deleted
     expect(res.data?.deleteProduct?.ok ?? res.data?.deleteProduct?.success ?? true).toBe(true);
   });
 });
