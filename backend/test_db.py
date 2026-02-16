@@ -9,7 +9,7 @@ print("Socket test...")
 s = socket.socket()
 s.settimeout(3)
 code = s.connect_ex((HOST, PORT))
-print("connect_ex code =", code)  # 0 = port open
+print("connect_ex code =", code)
 s.close()
 
 print("\nPsycopg2 test...")

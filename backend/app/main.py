@@ -36,7 +36,7 @@ def root():
 
 @app.get("/health")
 def health():
-    return {"status": "UP"}  # requis :contentReference[oaicite:9]{index=9}
+    return {"status": "UP"} 
 
 @app.on_event("startup")
 def on_startup():

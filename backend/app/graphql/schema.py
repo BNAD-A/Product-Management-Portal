@@ -9,10 +9,6 @@ from app.models.user import User, Role
 from app.models.product import Product
 from app.core.security import hash_password, verify_password, create_access_token
 
-
-# -------------------------
-# Types
-# -------------------------
 @strawberry.type
 class UserType:
     id: str
@@ -43,9 +39,6 @@ class ProductInput:
     quantity: int
 
 
-# -------------------------
-# Helpers
-# -------------------------
 def require_auth(info: Info) -> dict:
     user = info.context.get("user")
     if not user:
@@ -74,7 +67,6 @@ def validate_product_create(inp: ProductInput) -> None:
 
 
 def validate_product_update(inp: ProductInput) -> None:
-    # même règles que create (cahier des charges)
     validate_product_create(inp)
 
 
@@ -87,10 +79,6 @@ def to_product_type(p: Product) -> ProductType:
         quantity=p.quantity,
     )
 
-
-# -------------------------
-# Query
-# -------------------------
 @strawberry.type
 class Query:
     @strawberry.field
@@ -98,7 +86,7 @@ class Query:
         u = require_auth(info)
         return UserType(id=str(u["userId"]), username=u["username"], role=u["role"])
 
-    # US-5.1: auth required + ordered by created_at desc
+
     @strawberry.field
     def products(self, info: Info) -> List[ProductType]:
         require_auth(info)
@@ -107,7 +95,7 @@ class Query:
         rows = db.query(Product).order_by(desc(Product.created_at)).all()
         return [to_product_type(p) for p in rows]
 
-    # US-5.2: productById(id) with not-found + auth required
+
     @strawberry.field(name="productById")
     def product_by_id(self, info: Info, id: int) -> ProductType:
         require_auth(info)
@@ -119,12 +107,8 @@ class Query:
         return to_product_type(p)
 
 
-# -------------------------
-# Mutation
-# -------------------------
 @strawberry.type
 class Mutation:
-    # US-4.2 register validations
     @strawberry.mutation
     def register(self, info: Info, username: str, email: str, password: str) -> UserType:
         if not username or len(username.strip()) < 3:
@@ -153,7 +137,6 @@ class Mutation:
 
         return UserType(id=str(user.id), username=user.username, role=user.role.value)
 
-    # US-4.2 login returns token + user
     @strawberry.mutation
     def login(self, info: Info, username: str, password: str) -> LoginResponse:
         if not username or not password:
@@ -171,7 +154,6 @@ class Mutation:
             user=UserType(id=str(user.id), username=user.username, role=user.role.value),
         )
 
-    # US-5.3 createProduct validations + returns id
     @strawberry.mutation(name="createProduct")
     def create_product(self, info: Info, input: ProductInput) -> ProductType:
         require_auth(info)
@@ -189,7 +171,6 @@ class Mutation:
         db.refresh(p)
         return to_product_type(p)
 
-    # US-5.4 updateProduct not-found/validation/auth
     @strawberry.mutation(name="updateProduct")
     def update_product(self, info: Info, id: int, input: ProductInput) -> ProductType:
         require_auth(info)
@@ -209,7 +190,6 @@ class Mutation:
         db.refresh(p)
         return to_product_type(p)
 
-    # US-5.5 deleteProduct ADMIN-only; USER => Forbidden
     @strawberry.mutation(name="deleteProduct")
     def delete_product(self, info: Info, id: int) -> bool:
         require_admin(info)
