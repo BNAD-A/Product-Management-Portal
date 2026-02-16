@@ -24,8 +24,9 @@ import LanguageIcon from "@mui/icons-material/Language";
 
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useThemeMode } from "../context/ThemeContext";
-import { clearToken } from "../auth/token";
+import { clearToken } from "../auth/authStorage";
 import { AUTH_EVENT } from "../auth/events";
+import { isTokenValid } from "../auth/token";
 
 import { useTranslation } from "react-i18next";
 import { setAppLanguage } from "../i18n";

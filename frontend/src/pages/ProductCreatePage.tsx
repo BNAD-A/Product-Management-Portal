@@ -1,8 +1,17 @@
-import { useMemo, useState } from "react";
-import { useMutation } from "@apollo/client";
+import { useState } from "react";
+import { useMutation } from "@apollo/client/react";
 import { CREATE_PRODUCT_MUTATION } from "../graphql/mutations";
 import { PRODUCTS_QUERY } from "../graphql/queries";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+
+import {
+  Box,
+  Button,
+  Paper,
+  TextField,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
+
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
@@ -17,31 +26,22 @@ export default function ProductCreatePage() {
   const [price, setPrice] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(0);
 
-  const [createProduct, { loading }] = useMutation(CREATE_PRODUCT_MUTATION, {
-    refetchQueries: [{ query: PRODUCTS_QUERY }],
-  });
-
-  const errors = useMemo(() => {
-    const e: { name?: string; price?: string; quantity?: string } = {};
-    if (!name.trim()) e.name = t("validation.required");
-    else if (name.trim().length < 2) e.name = t("validation.minChars", { count: 2 });
-    if (Number(price) < 0) e.price = t("validation.minValue", { min: 0 });
-    if (Number(quantity) < 0) e.quantity = t("validation.minValue", { min: 0 });
-    return e;
-  }, [name, price, quantity, t]);
-
-  const canSubmit = Object.keys(errors).length === 0 && !loading;
+  const [createProductMutation, { loading: saving }] = useMutation(
+    CREATE_PRODUCT_MUTATION,
+    {
+      refetchQueries: [{ query: PRODUCTS_QUERY }],
+    }
+  );
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canSubmit) return;
 
     try {
-      await createProduct({
+      await createProductMutation({
         variables: {
           input: {
-            name: name.trim(),
-            description: description ? description : null,
+            name,
+            description,
             price: Number(price),
             quantity: Number(quantity),
           },
@@ -50,18 +50,15 @@ export default function ProductCreatePage() {
 
       enqueueSnackbar(t("toast.productCreated"), { variant: "success" });
       navigate("/products");
-    } catch (err: any) {
-      const msg = String(err?.message || "").toLowerCase();
-      if (msg.includes("network") || msg.includes("failed to fetch"))
-        enqueueSnackbar(t("toast.serverUnreachable"), { variant: "error" });
-      else enqueueSnackbar(t("toast.unknownError"), { variant: "error" });
+    } catch (err) {
+      enqueueSnackbar(t("toast.unknownError"), { variant: "error" });
     }
   };
 
   return (
     <Box>
       <Typography variant="h3" sx={{ mb: 2 }}>
-        {t("actions.create")} {t("products.title").toLowerCase().slice(0, -1)}
+        {t("actions.create")}
       </Typography>
 
       <Paper sx={{ p: 3, maxWidth: 720 }}>
@@ -72,8 +69,7 @@ export default function ProductCreatePage() {
             sx={{ mb: 2 }}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            error={!!errors.name}
-            helperText={errors.name}
+            disabled={saving}
           />
 
           <TextField
@@ -82,6 +78,7 @@ export default function ProductCreatePage() {
             sx={{ mb: 2 }}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            disabled={saving}
           />
 
           <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
@@ -91,8 +88,7 @@ export default function ProductCreatePage() {
               fullWidth
               value={price}
               onChange={(e) => setPrice(Number(e.target.value))}
-              error={!!errors.price}
-              helperText={errors.price}
+              disabled={saving}
             />
             <TextField
               label={t("products.quantity")}
@@ -100,16 +96,25 @@ export default function ProductCreatePage() {
               fullWidth
               value={quantity}
               onChange={(e) => setQuantity(Number(e.target.value))}
-              error={!!errors.quantity}
-              helperText={errors.quantity}
+              disabled={saving}
             />
           </Box>
 
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Button type="submit" variant="contained" disabled={!canSubmit}>
-              {loading ? t("common.loading") : t("actions.create")}
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={saving}
+              startIcon={saving ? <CircularProgress size={18} /> : undefined}
+            >
+              {saving ? t("common.loading") : t("actions.create")}
             </Button>
-            <Button variant="outlined" onClick={() => navigate("/products")}>
+
+            <Button
+              variant="outlined"
+              onClick={() => navigate("/products")}
+              disabled={saving}
+            >
               {t("actions.cancel")}
             </Button>
           </Box>

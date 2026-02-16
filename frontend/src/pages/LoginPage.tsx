@@ -1,11 +1,18 @@
-import { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { Box, Button, Paper, TextField, Typography, Alert } from "@mui/material";
+import React, { useState } from "react";
+import { useMutation } from "@apollo/client/react";
+import { setToken } from "../auth/authStorage";
+import {
+  Box,
+  Button,
+  Paper,
+  TextField,
+  Typography,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
 import { LOGIN_MUTATION } from "../graphql/mutations";
-import { setToken } from "../auth/token";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -61,6 +68,7 @@ export default function LoginPage() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             autoComplete="username"
+            disabled={loading}
           />
 
           <TextField
@@ -71,9 +79,15 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
+            disabled={loading}
           />
 
-          <Button type="submit" variant="contained" disabled={loading || !username || !password}>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={loading || !username || !password}
+            startIcon={loading ? <CircularProgress size={18} /> : undefined}
+          >
             {loading ? t("common.loading") : t("auth.login")}
           </Button>
 

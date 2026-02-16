@@ -1,14 +1,19 @@
-import { ApolloClient, InMemoryCache, HttpLink, from } from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
+import {
+  ApolloClient,
+  InMemoryCache,
+  createHttpLink,
+  from,
+} from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
-import { emitLogout } from "../auth/events";
+import { setContext } from "@apollo/client/link/context";
+import { getToken, clearToken } from "../auth/authStorage";
 
-const httpLink = new HttpLink({
-  uri: "http://localhost:8000/graphql", // adapte si besoin
+const httpLink = createHttpLink({
+  uri: "http://localhost:8000/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem("token"); // ta clé actuelle
+  const token = getToken();
   return {
     headers: {
       ...headers,
@@ -18,23 +23,33 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
-  // GraphQL errors
-  if (graphQLErrors?.length) {
-    const unauthorized = graphQLErrors.some((e) =>
-      String(e.message || "").toLowerCase().includes("unauthorized")
-    );
-    if (unauthorized) emitLogout("Unauthorized (GraphQL)");
+  if (graphQLErrors) {
+    for (const err of graphQLErrors) {
+      const msg = (err.message || "").toLowerCase();
+
+      // 401 Unauthorized -> logout + redirect login
+      if (msg.includes("unauthorized")) {
+        clearToken();
+        window.location.href = "/login";
+        return;
+      }
+
+      // 403 Forbidden -> message
+      if (msg.includes("forbidden")) {
+        alert("Access denied");
+      }
+    }
   }
 
-  // Network errors
-  // @ts-expect-error (Apollo types)
-  const statusCode = networkError?.statusCode || networkError?.response?.status;
-  if (statusCode === 401) {
-    emitLogout("401 (Network)");
+  // Network error
+  if (networkError) {
+    alert("Server unreachable");
   }
 });
 
-export const client = new ApolloClient({
-  link: from([errorLink, authLink.concat(httpLink)]),
+export const apolloClient = new ApolloClient({
+  link: from([errorLink, authLink, httpLink]),
   cache: new InMemoryCache(),
 });
+
+export const client = apolloClient;

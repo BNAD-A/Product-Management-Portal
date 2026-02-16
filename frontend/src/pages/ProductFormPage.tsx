@@ -1,4 +1,4 @@
-import { Box, Button, Paper, TextField } from "@mui/material";
+import { Box, Button, CircularProgress, Paper, TextField } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -11,10 +11,10 @@ type ProductFormValues = {
 
 type Props = {
   initialValues?: Partial<ProductFormValues>;
-  submitLabel?: "save" | "create"; // pour traduire le bouton
+  submitLabel?: "save" | "create";
   onSubmit: (values: ProductFormValues) => Promise<void> | void;
   onCancel: () => void;
-  loading?: boolean;
+  loading?: boolean; 
 };
 
 export default function ProductFormPage({
@@ -65,6 +65,7 @@ export default function ProductFormPage({
           onChange={(e) => setName(e.target.value)}
           error={!!errors.name}
           helperText={errors.name}
+          disabled={loading}
         />
 
         <TextField
@@ -73,6 +74,7 @@ export default function ProductFormPage({
           sx={{ mb: 2 }}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          disabled={loading}
         />
 
         <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
@@ -84,6 +86,7 @@ export default function ProductFormPage({
             onChange={(e) => setPrice(Number(e.target.value))}
             error={!!errors.price}
             helperText={errors.price}
+            disabled={loading}
           />
           <TextField
             label={t("products.quantity")}
@@ -93,15 +96,23 @@ export default function ProductFormPage({
             onChange={(e) => setQuantity(Number(e.target.value))}
             error={!!errors.quantity}
             helperText={errors.quantity}
+            disabled={loading}
           />
         </Box>
 
         <Box sx={{ display: "flex", gap: 1 }}>
-          <Button type="submit" variant="contained" disabled={!canSubmit}>
-            {loading ? t("common.loading") : t(submitLabel === "create" ? "actions.create" : "actions.save")}
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={!canSubmit}
+            startIcon={loading ? <CircularProgress size={18} /> : undefined}
+          >
+            {loading
+              ? t("common.loading")
+              : t(submitLabel === "create" ? "actions.create" : "actions.save")}
           </Button>
 
-          <Button type="button" variant="outlined" onClick={onCancel}>
+          <Button type="button" variant="outlined" onClick={onCancel} disabled={loading}>
             {t("actions.cancel")}
           </Button>
         </Box>

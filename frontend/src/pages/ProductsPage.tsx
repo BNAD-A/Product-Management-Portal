@@ -1,6 +1,7 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { PRODUCTS_QUERY } from "../graphql/queries";
 import { DELETE_PRODUCT_MUTATION } from "../graphql/mutations";
+
 import {
   Box,
   Button,
@@ -15,7 +16,9 @@ import {
   TableHead,
   TableRow,
   Typography,
+  CircularProgress,
 } from "@mui/material";
+
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useSnackbar } from "notistack";
@@ -30,13 +33,15 @@ export default function ProductsPage() {
     fetchPolicy: "network-only",
   });
 
-  const [deleteProduct, { loading: deleting }] = useMutation(DELETE_PRODUCT_MUTATION, {
-    refetchQueries: [{ query: PRODUCTS_QUERY }],
-  });
+  const [deleteProduct, { loading: deleting }] = useMutation(
+    DELETE_PRODUCT_MUTATION,
+    {
+      refetchQueries: [{ query: PRODUCTS_QUERY }],
+    }
+  );
 
   const rows = useMemo(() => data?.products ?? [], [data]);
 
-  // ✅ Dialog state (remplace window.confirm)
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -46,6 +51,7 @@ export default function ProductsPage() {
   };
 
   const closeDeleteDialog = () => {
+    if (deleting) return;
     setConfirmOpen(false);
     setSelectedId(null);
   };
@@ -59,7 +65,8 @@ export default function ProductsPage() {
       closeDeleteDialog();
     } catch (e: any) {
       const msg = String(e?.message || "").toLowerCase();
-      if (msg.includes("unauthorized")) enqueueSnackbar(t("toast.invalidCredentials"), { variant: "error" });
+      if (msg.includes("unauthorized"))
+        enqueueSnackbar(t("toast.invalidCredentials"), { variant: "error" });
       else if (msg.includes("network") || msg.includes("failed to fetch"))
         enqueueSnackbar(t("toast.serverUnreachable"), { variant: "error" });
       else enqueueSnackbar(t("toast.unknownError"), { variant: "error" });
@@ -68,21 +75,36 @@ export default function ProductsPage() {
 
   return (
     <Box>
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mb: 2,
+        }}
+      >
         <Typography variant="h3">{t("products.title")}</Typography>
 
         <Box sx={{ display: "flex", gap: 1 }}>
-          <Button variant="outlined" onClick={() => refetch()}>
+          <Button variant="outlined" onClick={() => refetch()} disabled={loading}>
             {t("actions.refresh")}
           </Button>
 
-          <Button variant="contained" onClick={() => navigate("/products/new")}>
+          <Button
+            variant="contained"
+            onClick={() => navigate("/products/new")}
+            disabled={loading}
+          >
             {t("actions.create")}
           </Button>
         </Box>
       </Box>
 
-      {loading && <Typography>{t("common.loading")}</Typography>}
+      {loading && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+          <CircularProgress />
+        </Box>
+      )}
 
       {error && (
         <Typography color="error">
@@ -110,7 +132,11 @@ export default function ProductsPage() {
                   <TableCell>{p.quantity}</TableCell>
                   <TableCell align="right">
                     <Box sx={{ display: "inline-flex", gap: 1 }}>
-                      <Button variant="outlined" onClick={() => navigate(`/products/${p.id}/edit`)}>
+                      <Button
+                        variant="outlined"
+                        onClick={() => navigate(`/products/${p.id}/edit`)}
+                        disabled={deleting}
+                      >
                         {t("actions.edit")}
                       </Button>
 
@@ -137,14 +163,22 @@ export default function ProductsPage() {
         </Paper>
       )}
 
-      {/* ✅ Dialog de confirmation traduit */}
       <Dialog open={confirmOpen} onClose={closeDeleteDialog}>
         <DialogTitle>{t("products.confirmDeletionTitle")}</DialogTitle>
         <DialogContent>{t("products.confirmDeletionMessage")}</DialogContent>
         <DialogActions>
-          <Button onClick={closeDeleteDialog}>{t("actions.cancel")}</Button>
-          <Button color="error" variant="contained" onClick={confirmDelete} disabled={deleting}>
-            {t("actions.delete")}
+          <Button onClick={closeDeleteDialog} disabled={deleting}>
+            {t("actions.cancel")}
+          </Button>
+
+          <Button
+            color="error"
+            variant="contained"
+            onClick={confirmDelete}
+            disabled={deleting}
+            startIcon={deleting ? <CircularProgress size={18} /> : undefined}
+          >
+            {deleting ? t("common.loading") : t("actions.delete")}
           </Button>
         </DialogActions>
       </Dialog>
