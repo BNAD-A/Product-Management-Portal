@@ -1,10 +1,11 @@
 import { useMutation, useQuery } from "@apollo/client/react";
-import { PRODUCTS_QUERY } from "../graphql/queries";
 import { DELETE_PRODUCT_MUTATION } from "../graphql/mutations";
+import { PRODUCTS_QUERY } from "../graphql/queries";
 
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -16,13 +17,19 @@ import {
   TableHead,
   TableRow,
   Typography,
-  CircularProgress,
 } from "@mui/material";
 
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { useSnackbar } from "notistack";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+};
 
 export default function ProductsPage() {
   const navigate = useNavigate();
@@ -37,7 +44,8 @@ export default function ProductsPage() {
     refetchQueries: [{ query: PRODUCTS_QUERY }],
   });
 
-  const rows = useMemo(() => data?.products ?? [], [data]);
+  const rows = useMemo<Product[]>(() => data?.products ?? [], [data]);
+
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -60,14 +68,17 @@ export default function ProductsPage() {
       await deleteProduct({ variables: { id: Number(selectedId) } });
       enqueueSnackbar(t("toast.productDeleted"), { variant: "success" });
       closeDeleteDialog();
-    } catch (e: any) {
-      const msg = String(e?.message || "").toLowerCase();
-      if (msg.includes("unauthorized"))
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      const low = msg.toLowerCase();
+
+      if (low.includes("unauthorized"))
         enqueueSnackbar(t("toast.invalidCredentials"), { variant: "error" });
-      else if (msg.includes("network") || msg.includes("failed to fetch"))
+      else if (low.includes("network") || low.includes("failed to fetch"))
         enqueueSnackbar(t("toast.serverUnreachable"), { variant: "error" });
       else enqueueSnackbar(t("toast.unknownError"), { variant: "error" });
     }
+
   };
 
   return (
@@ -118,7 +129,7 @@ export default function ProductsPage() {
             </TableHead>
 
             <TableBody>
-              {rows.map((p: any) => (
+              {rows.map((p: Product) => (
                 <TableRow key={p.id}>
                   <TableCell>{p.name}</TableCell>
                   <TableCell>{p.price}</TableCell>

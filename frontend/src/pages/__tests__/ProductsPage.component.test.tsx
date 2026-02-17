@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { mockUseQuery, mockUseMutation } from "../../test/mocks/apolloHooks";
+import { mockUseMutation, mockUseQuery } from "../../test/mocks/apolloHooks";
 
 vi.mock("@apollo/client", async () => {
   const actual: any = await vi.importActual("@apollo/client");
@@ -10,11 +10,10 @@ vi.mock("@apollo/client", async () => {
   };
 });
 
-import { describe, it, expect, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it } from "vitest";
 import { renderWithProviders } from "../../test/test-utils";
 import ProductsListPage from "../ProductsPage";
-import { mockUseQuery } from "../../test/mocks/apolloHooks";
 
 describe("ProductsPage - component", () => {
   beforeEach(() => {

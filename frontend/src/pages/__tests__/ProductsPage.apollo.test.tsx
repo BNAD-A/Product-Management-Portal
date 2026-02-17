@@ -1,9 +1,8 @@
-import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { mockUseMutation, mockUseQuery } from "../../test/setup";
 import { renderWithProviders } from "../../test/test-utils";
 import ProductsPage from "../ProductsPage";
-import { vi } from "vitest";
-import { mockUseQuery, mockUseMutation } from "../../test/setup";
 
 vi.mock("@apollo/client", async (importOriginal) => {
   const actual: any = await importOriginal();

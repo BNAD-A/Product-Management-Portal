@@ -1,7 +1,7 @@
-import { createContext, useContext, useMemo, useState } from "react";
-import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import React, { createContext, useContext, useMemo, useState } from "react";
 
-type Mode = "light" | "dark";
+export type Mode = "light" | "dark";
 
 type ThemeContextType = {
   mode: Mode;
@@ -22,7 +22,7 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
       createTheme({
         palette: { mode },
       }),
-    [mode],
+    [mode]
   );
 
   return (
@@ -36,7 +36,7 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useThemeMode() {
-  const context = useContext(ThemeModeContext);
-  if (!context) throw new Error("useThemeMode must be used inside ThemeModeProvider");
-  return context;
+  const ctx = useContext(ThemeModeContext);
+  if (!ctx) throw new Error("useThemeMode must be used inside ThemeModeProvider");
+  return ctx;
 }

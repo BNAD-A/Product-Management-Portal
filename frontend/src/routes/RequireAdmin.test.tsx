@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter, Routes, Route } from "react-router-dom";
-import RequireAdmin from "./RequireAdmin";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { beforeEach, describe, expect, it } from "vitest";
 import { makeJwt } from "../test/helpers/jwt";
+import RequireAdmin from "./RequireAdmin";
 
 function renderApp(initialPath: string) {
   return render(

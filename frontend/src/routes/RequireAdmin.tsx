@@ -8,7 +8,6 @@ function decodePayload(token: string): JwtPayload | null {
     const payloadPart = token.split(".")[1];
     if (!payloadPart) return null;
 
-    // base64url -> base64
     const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
     const json = decodeURIComponent(
       atob(base64)

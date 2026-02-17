@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@apollo/client/react";
-
 import {
   Box,
   Button,
@@ -16,18 +15,27 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import type { SelectChangeEvent } from "@mui/material/Select";
 import { useSnackbar } from "notistack";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DELETE_USER, UPDATE_USER_ROLE, USERS_QUERY } from "../graphql/users";
 
-type UserRow = { id: string; username: string; email: string; role: "ADMIN" | "USER" };
+type Role = "ADMIN" | "USER";
+type UserRow = { id: string; username: string; email: string; role: Role };
+
+function isRole(value: string): value is Role {
+  return value === "ADMIN" || value === "USER";
+}
 
 export default function AdminUsersPage() {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { data, loading, refetch } = useQuery(USERS_QUERY, { fetchPolicy: "cache-and-network" });
+  const { data, loading, refetch } = useQuery(USERS_QUERY, {
+    fetchPolicy: "cache-and-network",
+  });
+
   const [updateRole, { loading: updating }] = useMutation(UPDATE_USER_ROLE);
   const [deleteUser, { loading: deleting }] = useMutation(DELETE_USER);
 
@@ -36,15 +44,22 @@ export default function AdminUsersPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
 
-  const onChangeRole = async (u: UserRow, role: "ADMIN" | "USER") => {
+  const onChangeRole = async (u: UserRow, role: Role) => {
     try {
       await updateRole({ variables: { userId: u.id, role } });
       await refetch();
       enqueueSnackbar(t("actions.save"), { variant: "success" });
-    } catch (e) {
-      enqueueSnackbar(t("toast.unknownError"), { variant: "error" });
-      console.error(e);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error(msg);
+      enqueueSnackbar(msg, { variant: "error" });
     }
+  };
+
+  const handleRoleChange = (u: UserRow) => async (e: SelectChangeEvent<string>) => {
+    const value = e.target.value;
+    if (!isRole(value)) return; // sécurité
+    await onChangeRole(u, value);
   };
 
   const onAskDelete = (u: UserRow) => {
@@ -54,15 +69,17 @@ export default function AdminUsersPage() {
 
   const onConfirmDelete = async () => {
     if (!selectedUser) return;
+
     try {
       await deleteUser({ variables: { userId: selectedUser.id } });
       setConfirmOpen(false);
       setSelectedUser(null);
       await refetch();
       enqueueSnackbar(t("actions.delete"), { variant: "success" });
-    } catch (e) {
-      enqueueSnackbar(t("toast.unknownError"), { variant: "error" });
-      console.error(e);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error(msg);
+      enqueueSnackbar(msg, { variant: "error" });
     }
   };
 
@@ -88,11 +105,12 @@ export default function AdminUsersPage() {
               <TableRow key={u.id}>
                 <TableCell>{u.username}</TableCell>
                 <TableCell>{u.email}</TableCell>
+
                 <TableCell>
                   <Select
                     size="small"
                     value={u.role}
-                    onChange={(e) => onChangeRole(u, e.target.value as any)}
+                    onChange={handleRoleChange(u)}
                     disabled={updating}
                   >
                     <MenuItem value="USER">USER</MenuItem>

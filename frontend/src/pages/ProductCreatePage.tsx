@@ -1,13 +1,13 @@
-import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
+import { useState } from "react";
 import { CREATE_PRODUCT_MUTATION } from "../graphql/mutations";
 import { PRODUCTS_QUERY } from "../graphql/queries";
 
-import { Box, Button, Paper, TextField, Typography, CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress, Paper, TextField, Typography } from "@mui/material";
 
-import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductCreatePage() {
   const navigate = useNavigate();
@@ -40,9 +40,12 @@ export default function ProductCreatePage() {
 
       enqueueSnackbar(t("toast.productCreated"), { variant: "success" });
       navigate("/products");
-    } catch (err) {
-      enqueueSnackbar(t("toast.unknownError"), { variant: "error" });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error(msg);
+      enqueueSnackbar(msg, { variant: "error" });
     }
+
   };
 
   return (

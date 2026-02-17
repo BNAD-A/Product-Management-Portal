@@ -1,34 +1,33 @@
-import { useEffect, useMemo, useState } from "react";
 import {
   AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemText,
-  ListItemIcon,
-  Switch,
   Box,
   Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Switch,
+  Toolbar,
+  Typography,
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import MenuIcon from "@mui/icons-material/Menu";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import LogoutIcon from "@mui/icons-material/Logout";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
+import InventoryIcon from "@mui/icons-material/Inventory";
 import LanguageIcon from "@mui/icons-material/Language";
+import LogoutIcon from "@mui/icons-material/Logout";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useThemeMode } from "../context/ThemeContext";
 import { clearToken } from "../auth/authStorage";
 import { AUTH_EVENT } from "../auth/events";
-import { isTokenValid } from "../auth/token";
 
 import { useTranslation } from "react-i18next";
+import { useThemeMode } from "../context/ThemeContext";
 import { setAppLanguage } from "../i18n";
 
 const drawerWidth = 260;
@@ -46,13 +45,15 @@ export default function MainLayout() {
 
   const activePath = useMemo(() => location.pathname, [location.pathname]);
 
-  const handleLogout = (reason?: string) => {
-    clearToken();
-    navigate("/login", { replace: true });
-    if (reason) console.log("Logout:", reason);
-  };
+  const handleLogout = useCallback(
+    (reason?: string) => {
+      clearToken();
+      navigate("/login", { replace: true });
+      if (reason) console.log("Logout:", reason);
+    },
+    [navigate]
+  );
 
-  // Auto logout listener (Apollo 401)
   useEffect(() => {
     const handler = (e: Event) => {
       const detail = (e as CustomEvent).detail;
@@ -65,7 +66,7 @@ export default function MainLayout() {
     return () => {
       window.removeEventListener(AUTH_EVENT, handler as EventListener);
     };
-  }, []);
+  }, [handleLogout]);
 
   const drawerContent = (
     <Box sx={{ width: drawerWidth }}>
@@ -73,7 +74,6 @@ export default function MainLayout() {
       <Divider />
 
       <List sx={{ pt: 1 }}>
-        {/* Products */}
         <ListItemButton
           selected={activePath.startsWith("/products")}
           onClick={() => {
@@ -94,9 +94,19 @@ export default function MainLayout() {
           <ListItemIcon>
             <DarkModeIcon />
           </ListItemIcon>
-          <ListItemText primary={t("menu.theme")} secondary={mode === "dark" ? "Dark" : "Light"} />
-          <Switch checked={mode === "dark"} onChange={toggleTheme} />
+
+          <ListItemText
+            primary={t("menu.theme")}
+            secondary={mode === "dark" ? "Dark" : "Light"}
+          />
+
+          <Switch
+            checked={mode === "dark"}
+            onClick={(e) => e.stopPropagation()}
+            onChange={() => toggleTheme()}
+          />
         </ListItemButton>
+
 
         {/* Language Switch */}
         <ListItemButton
@@ -114,7 +124,6 @@ export default function MainLayout() {
 
         <Divider sx={{ my: 1 }} />
 
-        {/* Logout */}
         <ListItemButton onClick={() => handleLogout("User logout")}>
           <ListItemIcon>
             <LogoutIcon />
@@ -127,7 +136,6 @@ export default function MainLayout() {
 
   return (
     <Box sx={{ display: "flex" }}>
-      {/* APPBAR */}
       <AppBar
         position="fixed"
         sx={{
@@ -156,7 +164,6 @@ export default function MainLayout() {
         </Toolbar>
       </AppBar>
 
-      {/* DESKTOP DRAWER */}
       {isDesktop && (
         <Drawer
           variant="permanent"
@@ -174,7 +181,6 @@ export default function MainLayout() {
         </Drawer>
       )}
 
-      {/* MOBILE DRAWER */}
       {!isDesktop && (
         <Drawer
           variant="temporary"
@@ -189,7 +195,6 @@ export default function MainLayout() {
         </Drawer>
       )}
 
-      {/* MAIN CONTENT */}
       <Box
         component="main"
         sx={{

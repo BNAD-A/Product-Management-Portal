@@ -4,8 +4,8 @@ from sqlalchemy import text
 
 from app.db.session import engine
 from app.db.base import Base
-from app.models.user import User  # noqa
-from app.models.product import Product  # noqa
+from app.models.user import User
+from app.models.product import Product 
 
 from strawberry.fastapi import GraphQLRouter
 from app.graphql.schema import schema

@@ -1,13 +1,13 @@
-import { useMemo } from "react";
 import { useMutation } from "@apollo/client/react";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { REGISTER_MUTATION } from "../graphql/users";
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { useMemo } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { REGISTER_MUTATION } from "../graphql/users";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -42,9 +42,10 @@ export default function RegisterPage() {
       await registerMutation({ variables: values });
       enqueueSnackbar(t("toast.registerSuccess"), { variant: "success" });
       navigate("/login");
-    } catch (e: any) {
-      enqueueSnackbar(t("toast.unknownError"), { variant: "error" });
-      console.error(e);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error(msg);
+      enqueueSnackbar(msg, { variant: "error" });
     }
   };
 
