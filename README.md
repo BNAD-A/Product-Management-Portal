@@ -121,7 +121,7 @@ Role     : ADMIN
 
 **Regular User**
 ```
-Username : user1
+Username : user123
 Password : User123!
 Role     : USER
 ```
