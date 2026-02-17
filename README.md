@@ -227,10 +227,3 @@ To run the full project:
 The application should now be fully operational.
 
 ---
-
-
-If you want, I can now:
-
-* Refactor this into a slightly more "corporate" version
-* Or make a cleaner minimal version
-* Or help you finalize US-15.2 with clean commit strategy
