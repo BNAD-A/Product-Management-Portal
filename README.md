@@ -1,229 +1,176 @@
-# Product Management Portal
+<div align="center">
 
-A full-stack Product Management application.
+# ⚡ Product Management Portal
 
-This project showcases a complete modern architecture:
+**A modern, full-stack product management application — built for developers who care about craft.**
 
-* FastAPI + Strawberry GraphQL backend
-* PostgreSQL (Docker)
-* React + TypeScript frontend (Vite)
-* Apollo Client
-* JWT Authentication
-* Role-based access control (ADMIN / USER)
-* Unit testing with Vitest
-* i18n (EN / FR)
-* Dark / Light theme support
+[![FastAPI](https://img.shields.io/badge/FastAPI-0F1C2E?style=for-the-badge&logo=fastapi&logoColor=00C2D4)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React_18-0F1C2E?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-0F1C2E?style=for-the-badge&logo=typescript&logoColor=3178C6)](https://www.typescriptlang.org)
+[![GraphQL](https://img.shields.io/badge/GraphQL-0F1C2E?style=for-the-badge&logo=graphql&logoColor=E10098)](https://graphql.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-0F1C2E?style=for-the-badge&logo=postgresql&logoColor=4169E1)](https://postgresql.org)
+[![Docker](https://img.shields.io/badge/Docker-0F1C2E?style=for-the-badge&logo=docker&logoColor=2496ED)](https://docker.com)
 
----
-
-# 1. Prerequisites
-
-Make sure the following tools are installed:
-
-* Node.js (>= 18)
-* npm
-* Python (>= 3.10)
-* Docker & Docker Compose
-* Git
+</div>
 
 ---
 
-# 2. Clone the Repository
+## 🗺️ What's Inside
+
+```
+FastAPI + Strawberry GraphQL  ·  PostgreSQL (Docker)  ·  React + Vite
+Apollo Client  ·  JWT Auth  ·  RBAC  ·  Vitest  ·  i18n EN/FR  ·  Dark/Light Theme
+```
+
+---
+
+## 📋 Prerequisites
+
+| Tool | Version |
+|------|---------|
+| Node.js | ≥ 18 |
+| Python | ≥ 3.10 |
+| Docker & Docker Compose | Latest stable |
+| Git | Any |
+
+---
+
+## 🚀 Quick Start
+
+### 1 · Clone
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/Product-Management-Portal.git
 cd Product-Management-Portal
 ```
 
----
-
-# 3. Start PostgreSQL (Docker)
-
-From the root folder:
+### 2 · Start the Database
 
 ```bash
 docker-compose up -d
 ```
 
-To check running containers:
-
-```bash
-docker ps
-```
-
-To stop containers:
-
-```bash
-docker-compose down
-```
-
----
-
-# 4. Backend Setup (FastAPI + GraphQL)
-
-Go to backend folder:
+### 3 · Backend
 
 ```bash
 cd backend
-```
-
-Create virtual environment:
-
-```bash
 python -m venv .venv
-```
 
-Activate it:
-
-Windows:
-
-```bash
-.venv\Scripts\activate
-```
-
-Mac/Linux:
-
-```bash
+# Mac / Linux
 source .venv/bin/activate
-```
 
-Install dependencies:
+# Windows
+.venv\Scripts\activate
 
-```bash
 pip install -r requirements.txt
-```
-
-Run backend server:
-
-```bash
 uvicorn app.main:app --reload
 ```
 
-Backend available at:
-
-```
-http://localhost:8000
-```
-
-GraphQL Playground:
-
-```
-http://localhost:8000/graphql
-```
-
-Health check:
-
-```
-http://localhost:8000/health
-```
-
----
-
-# 5. Frontend Setup (React + Vite)
-
-Go to frontend folder:
+### 4 · Frontend
 
 ```bash
 cd frontend
-```
-
-Install dependencies:
-
-```bash
 npm install
-```
-
-Start development server:
-
-```bash
 npm run dev
 ```
 
-Frontend available at:
+### 5 · Open in Browser
 
+| Service | URL |
+|---------|-----|
+| React App | http://localhost:5173 |
+| FastAPI | http://localhost:8000 |
+| GraphQL Playground | http://localhost:8000/graphql |
+| Health Check | http://localhost:8000/health |
+
+---
+
+## 🔐 Roles & Permissions
+
+<table>
+<tr>
+<td width="50%">
+
+### 🔴 ADMIN
+- ✅ Create / Edit / Delete products
+- ✅ Manage users
+- ✅ Change roles
+- ✅ Delete users
+
+</td>
+<td width="50%">
+
+### 🔵 USER
+- ✅ View all products
+- ✅ Create & Edit products
+- ❌ Delete products
+- ❌ Manage users
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🧪 Sample Credentials
+
+**Admin**
 ```
-http://localhost:5173
+Username : admin1
+Password : Admin123!
+Role     : ADMIN
+```
+
+**Regular User**
+```
+Username : user1
+Password : User123!
+Role     : USER
 ```
 
 ---
 
-# 6. Run Frontend Tests
+## 🧬 Project Structure
 
-From the frontend folder:
+```
+Product-Management-Portal/
+├── backend/
+│   └── app/
+│       ├── main.py          # Entry point
+│       ├── models/          # SQLAlchemy models
+│       ├── schemas/         # Strawberry types & resolvers
+│       └── auth/            # JWT & RBAC
+├── frontend/
+│   └── src/
+│       ├── components/      # Reusable UI
+│       ├── pages/           # Route-level views
+│       ├── graphql/         # Apollo queries & mutations
+│       ├── i18n/            # EN / FR translations
+│       └── context/         # Theme & Auth contexts
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+## 🧪 Testing & Linting
 
 ```bash
-npm run test
+cd frontend
+
+npm run test   # Vitest unit tests
+npm run lint   # ESLint
 ```
 
-Run lint:
+---
+
+## 🐳 Database Management
 
 ```bash
-npm run lint
+docker-compose up -d    # Start
+docker ps               # Check status
+docker-compose down     # Stop
 ```
 
 ---
 
-# 7. Sample Credentials
-
-Admin account:
-
-```
-Username: admin1
-Password: Admin123!
-Role: ADMIN
-```
-
-Regular user (if registered):
-
-```
-Username: user1
-Password: User123!
-Role: USER
-```
-
----
-
-# 8. Roles & Permissions
-
-ADMIN can:
-
-* Create products
-* Edit products
-* Delete products
-* Manage users
-* Change roles
-* Delete users
-
-USER can:
-
-* View products
-* Create products
-* Edit products
-* Cannot delete products
-* Cannot manage users
-
----
-
-# 9. Project Structure
-
-```
-/backend
-/frontend
-docker-compose.yml
-README.md
-```
-
----
-
-# 10. Quick Start (From Scratch)
-
-To run the full project:
-
-1. `docker-compose up -d`
-2. Start backend (`uvicorn app.main:app --reload`)
-3. Start frontend (`npm run dev`)
-4. Login with sample credentials
-
-The application should now be fully operational.
-
----
