@@ -101,7 +101,12 @@ export default function AdminUsersPage() {
                 </TableCell>
 
                 <TableCell align="right">
-                  <Button color="error" variant="outlined" onClick={() => onAskDelete(u)} disabled={deleting}>
+                  <Button
+                    color="error"
+                    variant="outlined"
+                    onClick={() => onAskDelete(u)}
+                    disabled={deleting}
+                  >
                     {t("actions.delete")}
                   </Button>
                 </TableCell>

@@ -13,7 +13,7 @@ function renderApp(initialPath: string) {
           <Route path="/admin/users" element={<div>ADMIN_USERS_PAGE</div>} />
         </Route>
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 }
 

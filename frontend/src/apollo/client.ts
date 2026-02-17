@@ -1,9 +1,4 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  createHttpLink,
-  from,
-} from "@apollo/client";
+import { ApolloClient, InMemoryCache, createHttpLink, from } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 import { setContext } from "@apollo/client/link/context";
 import { getToken, clearToken } from "../auth/authStorage";

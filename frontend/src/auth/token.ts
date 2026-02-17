@@ -3,9 +3,7 @@ import { getToken } from "./authStorage";
 function base64UrlDecode(str: string) {
   const pad = str.length % 4 === 0 ? "" : "=".repeat(4 - (str.length % 4));
   const b64 = (str + pad).replace(/-/g, "+").replace(/_/g, "/");
-  const json = decodeURIComponent(
-    escape(atob(b64))
-  );
+  const json = decodeURIComponent(escape(atob(b64)));
   return JSON.parse(json);
 }
 

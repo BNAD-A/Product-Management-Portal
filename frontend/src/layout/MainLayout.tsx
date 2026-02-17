@@ -34,7 +34,6 @@ import { setAppLanguage } from "../i18n";
 const drawerWidth = 260;
 
 export default function MainLayout() {
-
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -95,10 +94,7 @@ export default function MainLayout() {
           <ListItemIcon>
             <DarkModeIcon />
           </ListItemIcon>
-          <ListItemText
-            primary={t("menu.theme")}
-            secondary={mode === "dark" ? "Dark" : "Light"}
-          />
+          <ListItemText primary={t("menu.theme")} secondary={mode === "dark" ? "Dark" : "Light"} />
           <Switch checked={mode === "dark"} onChange={toggleTheme} />
         </ListItemButton>
 
@@ -113,10 +109,7 @@ export default function MainLayout() {
           <ListItemIcon>
             <LanguageIcon />
           </ListItemIcon>
-          <ListItemText
-            primary={t("menu.language")}
-            secondary={i18n.language.toUpperCase()}
-          />
+          <ListItemText primary={t("menu.language")} secondary={i18n.language.toUpperCase()} />
         </ListItemButton>
 
         <Divider sx={{ my: 1 }} />
@@ -157,10 +150,7 @@ export default function MainLayout() {
             {t("app.title")}
           </Typography>
 
-          <IconButton
-            color="inherit"
-            onClick={() => handleLogout("AppBar logout")}
-          >
+          <IconButton color="inherit" onClick={() => handleLogout("AppBar logout")}>
             <LogoutIcon />
           </IconButton>
         </Toolbar>

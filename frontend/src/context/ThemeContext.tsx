@@ -14,12 +14,16 @@ export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<Mode>("light");
 
   const toggleTheme = () => {
-    setMode(prev => (prev === "light" ? "dark" : "light"));
+    setMode((prev) => (prev === "light" ? "dark" : "light"));
   };
 
-  const theme = useMemo(() => createTheme({
-    palette: { mode }
-  }), [mode]);
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: { mode },
+      }),
+    [mode],
+  );
 
   return (
     <ThemeModeContext.Provider value={{ mode, toggleTheme }}>

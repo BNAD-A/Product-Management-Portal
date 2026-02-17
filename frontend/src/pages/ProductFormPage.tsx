@@ -14,7 +14,7 @@ type Props = {
   submitLabel?: "save" | "create";
   onSubmit: (values: ProductFormValues) => Promise<void> | void;
   onCancel: () => void;
-  loading?: boolean; 
+  loading?: boolean;
 };
 
 export default function ProductFormPage({

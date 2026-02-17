@@ -14,7 +14,7 @@ function decodePayload(token: string): JwtPayload | null {
       atob(base64)
         .split("")
         .map((c) => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"))
-        .join("")
+        .join(""),
     );
 
     return JSON.parse(json);

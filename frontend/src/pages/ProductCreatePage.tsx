@@ -3,14 +3,7 @@ import { useMutation } from "@apollo/client/react";
 import { CREATE_PRODUCT_MUTATION } from "../graphql/mutations";
 import { PRODUCTS_QUERY } from "../graphql/queries";
 
-import {
-  Box,
-  Button,
-  Paper,
-  TextField,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Button, Paper, TextField, Typography, CircularProgress } from "@mui/material";
 
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
@@ -26,12 +19,9 @@ export default function ProductCreatePage() {
   const [price, setPrice] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(0);
 
-  const [createProductMutation, { loading: saving }] = useMutation(
-    CREATE_PRODUCT_MUTATION,
-    {
-      refetchQueries: [{ query: PRODUCTS_QUERY }],
-    }
-  );
+  const [createProductMutation, { loading: saving }] = useMutation(CREATE_PRODUCT_MUTATION, {
+    refetchQueries: [{ query: PRODUCTS_QUERY }],
+  });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,11 +100,7 @@ export default function ProductCreatePage() {
               {saving ? t("common.loading") : t("actions.create")}
             </Button>
 
-            <Button
-              variant="outlined"
-              onClick={() => navigate("/products")}
-              disabled={saving}
-            >
+            <Button variant="outlined" onClick={() => navigate("/products")} disabled={saving}>
               {t("actions.cancel")}
             </Button>
           </Box>

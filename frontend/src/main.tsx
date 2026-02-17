@@ -23,5 +23,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </ThemeModeProvider>
       </SnackbarProvider>
     </ApolloProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

@@ -33,12 +33,9 @@ export default function ProductsPage() {
     fetchPolicy: "network-only",
   });
 
-  const [deleteProduct, { loading: deleting }] = useMutation(
-    DELETE_PRODUCT_MUTATION,
-    {
-      refetchQueries: [{ query: PRODUCTS_QUERY }],
-    }
-  );
+  const [deleteProduct, { loading: deleting }] = useMutation(DELETE_PRODUCT_MUTATION, {
+    refetchQueries: [{ query: PRODUCTS_QUERY }],
+  });
 
   const rows = useMemo(() => data?.products ?? [], [data]);
 
@@ -90,11 +87,7 @@ export default function ProductsPage() {
             {t("actions.refresh")}
           </Button>
 
-          <Button
-            variant="contained"
-            onClick={() => navigate("/products/new")}
-            disabled={loading}
-          >
+          <Button variant="contained" onClick={() => navigate("/products/new")} disabled={loading}>
             {t("actions.create")}
           </Button>
         </Box>

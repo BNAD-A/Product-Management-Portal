@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { setToken } from "../auth/authStorage";
-import {
-  Box,
-  Button,
-  Paper,
-  TextField,
-  Typography,
-  Alert,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Button, Paper, TextField, Typography, Alert, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LOGIN_MUTATION } from "../graphql/mutations";

@@ -12,7 +12,7 @@ function renderApp(initialPath: string) {
           <Route path="/products" element={<div>PRODUCTS_PAGE</div>} />
         </Route>
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 }
 

@@ -22,7 +22,7 @@ export default function RegisterPage() {
         email: z.string().email(t("validation.emailInvalid")),
         password: z.string().min(6, t("validation.minChars", { count: 6 })),
       }),
-    [t]
+    [t],
   );
 
   type FormValues = z.infer<typeof schema>;
