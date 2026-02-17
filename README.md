@@ -128,27 +128,6 @@ Role     : USER
 
 ---
 
-## 🧬 Project Structure
-
-```
-Product-Management-Portal/
-├── backend/
-│   └── app/
-│       ├── main.py          # Entry point
-│       ├── models/          # SQLAlchemy models
-│       ├── schemas/         # Strawberry types & resolvers
-│       └── auth/            # JWT & RBAC
-├── frontend/
-│   └── src/
-│       ├── pages/           # Route-level views
-│       ├── graphql/         # Apollo queries & mutations
-│       ├── i18n/            # EN / FR translations
-│       └── context/         # Theme & Auth contexts
-├── docker-compose.yml
-└── README.md
-```
-
----
 
 ## 🧪 Testing & Linting
 
