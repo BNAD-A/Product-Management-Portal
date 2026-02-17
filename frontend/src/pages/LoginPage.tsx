@@ -1,9 +1,9 @@
-import React, { useState } from "react";
 import { useMutation } from "@apollo/client/react";
-import { setToken } from "../auth/authStorage";
-import { Box, Button, Paper, TextField, Typography, Alert, CircularProgress } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Alert, Box, Button, CircularProgress, Paper, TextField, Typography } from "@mui/material";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { setToken } from "../auth/authStorage";
 import { LOGIN_MUTATION } from "../graphql/mutations";
 
 export default function LoginPage() {
@@ -46,50 +46,63 @@ export default function LoginPage() {
   })();
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h3" sx={{ mb: 2 }}>
-        {t("auth.loginTitle")}
-      </Typography>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "background.default",
+        p: 2,
+      }}
+    >
+      <Box sx={{ width: "100%", maxWidth: 520 }}>
+        <Typography variant="h3" sx={{ mb: 3 }}>
+          {t("auth.loginTitle")}
+        </Typography>
 
-      <Paper sx={{ p: 3, maxWidth: 520 }}>
-        <form onSubmit={onSubmit}>
-          <TextField
-            label={t("auth.username")}
-            fullWidth
-            sx={{ mb: 2 }}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoComplete="username"
-            disabled={loading}
-          />
+        <Paper sx={{ p: 4 }}>
+          <form onSubmit={onSubmit}>
+            <TextField
+              label={t("auth.username")}
+              fullWidth
+              sx={{ mb: 2 }}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
+              disabled={loading}
+            />
 
-          <TextField
-            label={t("auth.password")}
-            type="password"
-            fullWidth
-            sx={{ mb: 2 }}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-            disabled={loading}
-          />
+            <TextField
+              label={t("auth.password")}
+              type="password"
+              fullWidth
+              sx={{ mb: 2 }}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              disabled={loading}
+            />
 
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={loading || !username || !password}
-            startIcon={loading ? <CircularProgress size={18} /> : undefined}
-          >
-            {loading ? t("common.loading") : t("auth.login")}
-          </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              disabled={loading || !username || !password}
+              startIcon={loading ? <CircularProgress size={18} /> : undefined}
+            >
+              {loading ? t("common.loading") : t("auth.login")}
+            </Button>
 
-          {errorMessage && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {errorMessage}
-            </Alert>
-          )}
-        </form>
-      </Paper>
+            {errorMessage && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {errorMessage}
+              </Alert>
+            )}
+          </form>
+        </Paper>
+      </Box>
     </Box>
   );
+
 }
