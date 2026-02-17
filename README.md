@@ -92,19 +92,17 @@ npm run dev
 <td width="50%">
 
 ### 🔴 ADMIN
-- ✅ Create / Edit / Delete products
-- ✅ Manage users
-- ✅ Change roles
-- ✅ Delete users
+- Create / Edit / Delete products
+- Manage users
+- Change roles
+- Delete users
 
 </td>
 <td width="50%">
 
 ### 🔵 USER
-- ✅ View all products
-- ✅ Create & Edit products
-- ❌ Delete products
-- ❌ Manage users
+- View all products
+- Create & Edit products
 
 </td>
 </tr>
@@ -142,7 +140,6 @@ Product-Management-Portal/
 │       └── auth/            # JWT & RBAC
 ├── frontend/
 │   └── src/
-│       ├── components/      # Reusable UI
 │       ├── pages/           # Route-level views
 │       ├── graphql/         # Apollo queries & mutations
 │       ├── i18n/            # EN / FR translations
