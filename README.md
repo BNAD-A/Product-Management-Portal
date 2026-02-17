@@ -2,7 +2,7 @@
 
 # Product Management Portal
 
-**A modern, full-stack product management application — built for developers who care about craft.**
+**A modern full-stack product management application .**
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0F1C2E?style=for-the-badge&logo=fastapi&logoColor=00C2D4)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React_18-0F1C2E?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
