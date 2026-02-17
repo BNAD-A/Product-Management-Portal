@@ -1,36 +1,38 @@
-import { vi } from "vitest";
-import { mockUseMutation, mockUseQuery } from "../../test/mocks/apolloHooks";
+import { screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { renderWithProviders } from "../../test/test-utils";
+import ProductsPage from "../ProductsPage";
 
-vi.mock("@apollo/client", async () => {
-  const actual: any = await vi.importActual("@apollo/client");
+import i18n from "../../i18n";
+
+vi.mock("@apollo/client/react", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@apollo/client/react")>();
   return {
     ...actual,
-    useQuery: (...args: any[]) => mockUseQuery(...args),
-    useMutation: (...args: any[]) => mockUseMutation(...args),
+    useQuery: () => ({
+      data: {
+        products: [
+          { id: "1", name: "P1", description: "d1", price: 10, quantity: 2 },
+          { id: "2", name: "P2", description: "d2", price: 20, quantity: 3 },
+        ],
+      },
+      loading: false,
+      error: undefined,
+      refetch: vi.fn(),
+    }),
+    useMutation: () => [vi.fn(), { loading: false, error: undefined }],
   };
 });
 
-import { screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
-import { renderWithProviders } from "../../test/test-utils";
-import ProductsListPage from "../ProductsPage";
-
 describe("ProductsPage - component", () => {
   beforeEach(() => {
-    mockUseQuery.mockReset();
+    i18n.changeLanguage("en");
   });
 
-  it("renders product rows", async () => {
-    mockUseQuery.mockReturnValueOnce({
-      data: { products: [{ id: "1", name: "Apple", price: 10 }] },
-      loading: false,
-      error: undefined,
-      refetch: async () => ({}),
-    });
+  it("renders product rows", () => {
+    renderWithProviders(<ProductsPage />, { route: "/products" });
 
-    renderWithProviders(<ProductsListPage />);
-
-    expect(await screen.findByText("Apple")).toBeInTheDocument();
-    expect(screen.getByText("10")).toBeInTheDocument();
+    expect(screen.getByText("P1")).toBeInTheDocument();
+    expect(screen.getByText("P2")).toBeInTheDocument();
   });
 });

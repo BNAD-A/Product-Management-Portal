@@ -1,14 +1,3 @@
-import { vi } from "vitest";
-import { mockUseMutation, mockUseQuery } from "../../test/mocks/apolloHooks";
-
-vi.mock("@apollo/client", async () => {
-  const actual: any = await vi.importActual("@apollo/client");
-  return {
-    ...actual,
-    useQuery: (...args: any[]) => mockUseQuery(...args),
-    useMutation: (...args: any[]) => mockUseMutation(...args),
-  };
-});
 
 import { fireEvent, screen } from "@testing-library/react";
 import { renderWithProviders } from "../../test/test-utils";

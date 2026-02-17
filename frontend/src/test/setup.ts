@@ -1,25 +1,14 @@
-import "@testing-library/jest-dom";
-export { mockUseQuery, mockUseMutation } from "./mocks/apolloHooks";
+import { vi } from "vitest";
 
-Object.defineProperty(window, "matchMedia", {
-  writable: true,
-  value: (query: string) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    addListener: () => {},
-    removeListener: () => {},
-    dispatchEvent: () => false,
-  }),
-});
+export const mockUseQuery = vi.fn();
+export const mockUseMutation = vi.fn();
 
-import i18n from "../i18n";
-import { afterEach } from "vitest";
+vi.mock("@apollo/client/react", async () => {
+  const actual = await vi.importActual<typeof import("@apollo/client/react")>("@apollo/client/react");
 
-afterEach(async () => {
-  await i18n.changeLanguage("en");
-  localStorage.removeItem("lang");
-  localStorage.removeItem("pp_lang");
+  return {
+    ...actual,
+    useQuery: (...args: unknown[]) => mockUseQuery(...args),
+    useMutation: (...args: unknown[]) => mockUseMutation(...args),
+  };
 });
