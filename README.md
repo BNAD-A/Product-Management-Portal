@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ Product Management Portal
+# Product Management Portal
 
 **A modern, full-stack product management application — built for developers who care about craft.**
 
